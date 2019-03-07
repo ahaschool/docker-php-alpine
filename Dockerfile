@@ -1,10 +1,10 @@
-FROM php:7.1.26-alpine3.8
+FROM php:7.1.26-fpm-alpine3.8
 LABEL Maintainer="小方老师<tech@ahaschool.com>" Description="ahaschool nginx php"
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 
 # Install packages, autoconf g++ make 
-RUN apk add libmcrypt-dev librdkafka-dev
+RUN apk add libmcrypt-dev librdkafka-dev nginx
 RUN docker-php-ext-install bcmath pdo_mysql mcrypt
 
 COPY docker-php-helper /usr/local/bin/
