@@ -1,0 +1,28 @@
+#!/bin/sh
+set -e
+
+usage() {
+    echo "usage: $0 COMMAND"
+    echo
+    echo "install php helper."
+    echo
+    echo "Commands:"
+    echo "   init  install php extension."
+    echo
+}
+
+case "$1" in
+    init)
+        echo $PHPIZE_DEPS
+        apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS
+        pecl install igbinary
+        printf "yes\nyes\n" | pecl install redis
+        pecl install rdkafka
+        rm -rf /tmp/pear
+        apk del .phpize-deps
+        ;;
+    *)
+        usage
+        exit 1
+        ;;
+esac
