@@ -1,23 +1,25 @@
 FROM php:7.1.26-fpm-alpine3.8
 LABEL Maintainer="小方老师<tech@ahaschool.com>" Description="ahaschool nginx php"
 
-# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+ENV www_name view
 
-# Install packages, autoconf g++ make 
-RUN apk add libmcrypt-dev librdkafka-dev nginx
-RUN docker-php-ext-install bcmath pdo_mysql mcrypt
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 
 COPY docker-php-helper /usr/local/bin/
+COPY src /tmp/src
 
-RUN docker-php-helper init
+# Install packages, autoconf g++ make 
+RUN apk add nginx libmcrypt-dev librdkafka-dev && docker-php-ext-install bcmath pdo_mysql mcrypt
+RUN docker-php-helper init && docker-php-helper nginx && \
+    rm -rf /var/cache/apk/ && \
+    mkdir -p /var/www/html /var/log/nginx
 
-RUN docker-php-ext-enable igbinary redis rdkafka
-
-# RUN apk del libmcrypt-dev librdkafka-dev
-RUN rm -rf /var/cache/apk/
-
-# Create webroot directories
-RUN mkdir -p /var/www/html
 WORKDIR /var/www/html
 
-EXPOSE 8082
+VOLUME ['/var/www/html', '/var/log']
+
+EXPOSE 80
+
+STOPSIGNAL SIGTERM
+
+CMD ["docker-php-helper", "start"]

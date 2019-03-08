@@ -20,6 +20,25 @@ case "$1" in
         pecl install rdkafka
         rm -rf /tmp/pear
         apk del .phpize-deps
+        docker-php-ext-enable igbinary redis rdkafka
+        ;;
+    nginx)
+        echo 'nginx'
+        mv /tmp/src/dynamic.conf /etc/nginx/conf.d/dynamic.conf.bak
+        mv /tmp/src/index.php /var/www/html
+        sed -i "s/80/81/g" /etc/nginx/conf.d/default.conf
+        ;;
+    start)
+        echo 'start'
+        cp /etc/nginx/conf.d/dynamic.conf.bak /etc/nginx/conf.d/dynamic.conf
+        sed -i "s/view/${www_name}/g" /etc/nginx/conf.d/dynamic.conf
+        mkdir -p /run/nginx/ /opt/aha/${www_name}/public
+        cp /var/www/html/index.php /opt/aha/${www_name}/public
+        nohup php-fpm > /dev/null 2>&1 &
+        nginx -g "daemon off;"
+        ;;
+    clear)
+        echo 'clear'
         ;;
     *)
         usage
