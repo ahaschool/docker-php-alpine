@@ -31,9 +31,9 @@ case "$1" in
     start)
         echo 'start'
         cp /etc/nginx/conf.d/dynamic.conf.bak /etc/nginx/conf.d/dynamic.conf
-        sed -i "s/view/${www_name}/g" /etc/nginx/conf.d/dynamic.conf
-        mkdir -p /run/nginx/ /opt/aha/${www_name}/public
-        cp /var/www/html/index.php /opt/aha/${www_name}/public
+        sed -i "s/view/${site}/g" /etc/nginx/conf.d/dynamic.conf
+        mkdir -p /run/nginx/ /opt/aha/${site}/public
+        cp /var/www/html/index.php /opt/aha/${site}/public
         nohup php-fpm > /dev/null 2>&1 &
         nginx -g "daemon off;"
         ;;
